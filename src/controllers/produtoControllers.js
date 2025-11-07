@@ -22,7 +22,48 @@ const produtos = await produtoModel.buscarTodos();
             console.error('Erro ao listar produtos', error);
             res.status(500).json({erro: 'Erro ao buscar produtos.'});
         }
+    },
+    
+    /**
+     * 
+     * Controlador que cria um novo produto no banco de dados
+     * 
+     * @async
+     * @function criarProduto
+     * @param {object} req objeto de requisição (recebido do cliente HTTP)
+     * @param {object} res objeto de resposta (enviado do cliente HTTP)
+     * @returns {promise<void>} Retorna uma messagem de sucesso ou erro em formato JSON
+     * @throws {400} Se algum campo obrigatorio não for preenchido corretamente
+     * @throws {500} Se ocorrer qualquer erro interno no servidor
+     * 
+     * @example
+     * POST /produtos
+     * BODY:
+     * (
+     *  "nomeProduto": Camiseta
+     *  "precoProduto": 49.90
+     * )
+     */
+
+    criarProduto: async (req, res) => {
+        try {
+            
+            const {nomeProduto, precoProduto} = req.body;
+
+            if (nomeProduto == undefined ||nomeProduto.trim() == "" || precoProduto == undefined || isNaN(precoProduto)) {
+                    return res.status(400).json({erro: "Campos obrigatorios não preenchidos"});
+            }
+
+            await produtoModel.inserirProduto(nomeProduto, precoProduto);
+
+            res.status(201).json({message: "Produto cadastrado com sucesso"});
+
+        } catch (error) {
+            console.error('Erro ao cadastrar produto', error);
+            res.status(500).json({erro: 'Erro ao cadastrar produtos.'});
+        }
     }
+
 }
 
 module.exports = {produtoController};
