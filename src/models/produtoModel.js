@@ -29,6 +29,27 @@ const produtoModel = {
         }
     },
 
+    buscarUm: async (idProduto) => {
+        try {
+            const pool = await getConnection();
+
+            const querySQL = `
+            SELECT * FROM Produtos
+            WHERE idProduto = @idProduto
+            `;
+
+            const result = await pool.request()
+            .input('idProduto', sql.UniqueIdentifier, idProduto)
+            .query(querySQL);
+
+            return result.recordset;
+
+        } catch (error) {
+            console.error("Erro ao buscar o produto", error);
+            throw error;
+        }
+    },
+
     /**
      * Insere um novo produto no banco de dados
      * 
@@ -48,6 +69,7 @@ const produtoModel = {
             INSERT INTO Produtos (nomeProduto, precoProduto)
             VALUES (@nomeProduto, @precoProduto)
             `
+            
             await pool.request()
             .input("nomeProduto", sql.VarChar(100), nomeProduto)
             .input("precoProduto", sql.Decimal(10,2), precoProduto)
