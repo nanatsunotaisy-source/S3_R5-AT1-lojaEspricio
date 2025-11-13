@@ -74,13 +74,12 @@ const produtoModel = {
             .input("nomeProduto", sql.VarChar(100), nomeProduto)
             .input("precoProduto", sql.Decimal(10,2), precoProduto)
             .query(querySQL);
-
+                        
         } catch (error) {
             console.error("Erro ao inserir produtos", error);
             throw error;
         }
     }
 };
-
 
 module.exports = {produtoModel};
