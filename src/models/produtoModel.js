@@ -51,10 +51,10 @@ const produtoModel = {
                 WHERE idProduto = @idProduto
             `;
 
-            await pool.require()
-                .inpul('idProduto',sql.UniqueIdentifier, idProduto)
-                .inpul('nomeProduto', sql.VarChar(100), nomeProduto)
-                .inpul('precoProduto', sql.Decimal(10,2), precoProduto)
+            await pool.request()
+                .input('idProduto',sql.UniqueIdentifier, idProduto)
+                .input('nomeProduto', sql.VarChar(100), nomeProduto)
+                .input('precoProduto', sql.Decimal(10,2), precoProduto)
                 .query(querySQL);
         } catch (error) {
             console.error("Erro ao atualizar o produtos", error);

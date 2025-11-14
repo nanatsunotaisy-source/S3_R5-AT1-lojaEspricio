@@ -50,7 +50,7 @@ const produtoController = {
       const {idProduto} = req.params;
       const {nomeProduto, precoProduto} = req.body;
 
-       if (idProduto.length !== 1) {
+       if (idProduto.length !== 36) {
           return res.status(404).json({ erro: "id do produto invalido!" });
         }
 

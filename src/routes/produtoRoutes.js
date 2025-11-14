@@ -6,6 +6,6 @@ router.get("/produtos", produtoController.listarProdutos);
 
 router.post("/produtos", produtoController.criarProduto);
 
-router.put("/produto/:idProduto", produtoController.atualizarProduto);
+router.put("/produtos/:idProduto", produtoController.atualizarProduto);
 
 module.exports = {produtosRoutes: router};
