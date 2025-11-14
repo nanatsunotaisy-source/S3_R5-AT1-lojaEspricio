@@ -1,5 +1,5 @@
 const { produtoModel } = require("../models/produtoModel");
-const clienteModel = require("../models/clienteModel"); // Adicionamos o model de cliente
+
 
 const produtoController = {
   listarProdutos: async (req, res) => {
@@ -42,79 +42,41 @@ const produtoController = {
       console.error('Erro ao cadastrar produto', error);
       res.status(500).json({ erro: 'Erro ao cadastrar produtos.' });
     }
-  }
-}; // Fim do produtoController
-
-const clienteController = {
-  listarClientes: async (req, res) => {
-    try {
-      const { idClientes } = req.query;
-
-      // 1. SE UM ID FOI FORNECIDO (buscaUm)
-      if (idClientes) {
-        // Validação de ID (seguindo seu padrão de 36-char UUID)
-        if (idClientes.length !== 36) {
-          return res.status(400).json({ erro: "ID do cliente inválido!" });
-        }
-
-        const cliente = await clienteModel.buscarUm(idClientes);
-        return res.status(200).json(cliente);
-      }
-
-      // 2. SE NENHUM ID FOI FORNECIDO (buscarTodos)
-      const clientes = await clienteModel.buscarTodos();
-      res.status(200).json(clientes);
-
-    } catch (error) {
-      console.error('Erro ao listar clientes', error);
-      res.status(500).json({ erro: 'Erro ao buscar clientes.' });
-    }
   },
 
-  /**
-   * Controlador que cria um novo cliente no banco de dados.
-   * (Desafio: Verifica se o CPF já existe)
-   */
-  criarCliente: async (req, res) => {
+  atualizarProduto: async (req, res)=> {
+
     try {
-      // 1. Pega os dados do corpo (body) da requisição
-      const { nomeCliente, cpfCliente } = req.body;
+      const {idProduto} = req.params;
+      const {nomeProduto, precoProduto} = req.body;
 
-      // 2. Validação simples
-      if (!nomeCliente || !cpfCliente) {
-        return res.status(400).json({
-          erro: "Nome e CPF são obrigatórios."
-        });
-      }
+       if (idProduto.length !== 1) {
+          return res.status(404).json({ erro: "id do produto invalido!" });
+        }
 
-      // 3. Chama o Model para inserir no banco
-      const novoCliente = { nomeCliente, cpfCliente };
-      const clienteCriado = await clienteModel.criarCliente(novoCliente);
+        const produto = await produtoModel.buscarUm(idProduto);
+        
+        if (!produto || produto.length !== 1){
+          return res.status(404).json({erro: 'Produto não encontrado!'});
+        }
 
-      // 4. Retorna o cliente que acabou de ser criado
-      res.status(201).json(clienteCriado);
+        const produtoAtual = produto[0];
+
+        const nomeAtualizado = nomeProduto ?? produtoAtual.nomeProduto;
+        const precoAtualizado = precoProduto ?? produtoAtual.precoProduto;
+
+        await produtoModel.atualizarProduto(idProduto,nomeAtualizado, precoAtualizado);
+
+        res.status(200).json({message: 'Produto atualizado com sucesso!'});
 
     } catch (error) {
-
-      // 5. Tratamento de Erro (O Desafio)
-      if (error.message === "Este CPF já está cadastrado.") {
-
-        // Retorna o status 409 Conflict
-        return res.status(409).json({
-          erro: error.message
-        });
-      }
-
-      // 6. Erro genérico para qualquer outra falha
-      console.error("Erro ao criar cliente:", error);
-      res.status(500).json({
-        erro: "Erro interno no servidor ao tentar criar o cliente."
-      });
+      console.error('Erro ao atualizar produto', error);
+      res.status(500).json({ erro: 'Erro ao atualizar produtos.' });
     }
   }
-}; // Fim do clienteController
+};
+
+
 
 module.exports = {
-  produtoController,
-  clienteController
-};
+  produtoController,};

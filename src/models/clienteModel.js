@@ -28,17 +28,17 @@ const clienteModel = {
         }
     },
 
-    buscarUm: async (idClientes) => {
+    buscarUm: async (cpfCliente) => {
         try {
             const pool = await getConnection();
 
             const querySQL = `
                 SELECT * FROM Clientes
-                WHERE idClientes = @idClientes
+                WHERE cpfCliente = @cpfCliente
             `;
 
             const result = await pool.request()
-                .input('idClientes', sql.UniqueIdentifier, idClientes)
+                .input('cpfCliente', sql.UniqueIdentifier, cpfCliente)
                 .query(querySQL);
 
             return result.recordset;
@@ -91,3 +91,5 @@ const clienteModel = {
         }
     }
 }; // Fechamento do objeto clienteModel
+
+module.exports = {clienteModel}

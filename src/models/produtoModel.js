@@ -28,6 +28,49 @@ const produtoModel = {
             throw error; // Reverberar o erro para a função que o chamar.
         }
     },
+ /**
+     * Atualiza um produto no banco de dados
+     * 
+     * @async
+     * @function atualizarProduto
+     * @param {string} idProduto  - Id do produto em UUID no banco de dados.
+     * @param {string} nomeProduto - Nome do produto a ser atualizado.
+     * @param {number} precoProduto Prreço do produto a ser atualizado.
+     * @returns {Promise<void>}Não retorna nada, apenas executa a atualizado
+     * @throws mostra no console e propaga o erro caso a atualização falhe.
+     */
+
+     atualizarProduto: async (idProduto, nomeProduto, precoProduto)=> {
+        try {
+            const pool = await getConnection();
+            
+            const querySQL = `
+            UPDATE Produtos
+            SET nomeProduto = @nomeProduto,
+                precoProduto = @precoProduto
+                WHERE idProduto = @idProduto
+            `;
+
+            await pool.require()
+                .inpul('idProduto',sql.UniqueIdentifier, idProduto)
+                .inpul('nomeProduto', sql.VarChar(100), nomeProduto)
+                .inpul('precoProduto', sql.Decimal(10,2), precoProduto)
+                .query(querySQL);
+        } catch (error) {
+            console.error("Erro ao atualizar o produtos", error);
+            throw error;
+        }
+    },
+
+/**
+     * Busca apenas um produto no banco de dados.
+     * 
+     * @async
+     * @function buscarUm
+     * @param {string} idProduto - Id do produto em UUID no banco de dados.
+     * @returns {Promise<Array>} - Retorna uma lista com um produto caso encontre no banco de dados.
+     * @throws Mostra no console e propaga o erro caso a busca falhe.
+     */
 
     buscarUm: async (idProduto) => {
         try {
