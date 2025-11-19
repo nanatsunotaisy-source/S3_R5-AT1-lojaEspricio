@@ -40,27 +40,6 @@ const produtoModel = {
      * @throws mostra no console e propaga o erro caso a atualização falhe.
      */
 
-     atualizarProduto: async (idProduto, nomeProduto, precoProduto)=> {
-        try {
-            const pool = await getConnection();
-            
-            const querySQL = `
-            UPDATE Produtos
-            SET nomeProduto = @nomeProduto,
-                precoProduto = @precoProduto
-                WHERE idProduto = @idProduto
-            `;
-
-            await pool.request()
-                .input('idProduto',sql.UniqueIdentifier, idProduto)
-                .input('nomeProduto', sql.VarChar(100), nomeProduto)
-                .input('precoProduto', sql.Decimal(10,2), precoProduto)
-                .query(querySQL);
-        } catch (error) {
-            console.error("Erro ao atualizar o produtos", error);
-            throw error;
-        }
-    },
 
 /**
      * Busca apenas um produto no banco de dados.
@@ -73,6 +52,7 @@ const produtoModel = {
      */
 
     buscarUm: async (idProduto) => {
+
         try {
             const pool = await getConnection();
 
@@ -122,7 +102,61 @@ const produtoModel = {
             console.error("Erro ao inserir produtos", error);
             throw error;
         }
-    }
+    },
+
+    /**
+     * Atualiza um produto no banco de dados
+     * 
+     * @async
+     * @function atualizarProduto
+     * @param {string} idProduto  - Id do produto em UUID no banco de dados.
+     * @param {string} nomeProduto - Nome do produto a ser atualizado.
+     * @param {number} precoProduto Prreço do produto a ser atualizado.
+     * @returns {Promise<void>}Não retorna nada, apenas executa a atualizado
+     * @throws mostra no console e propaga o erro caso a atualização falhe.
+     */
+
+     atualizarProduto: async (idProduto, nomeProduto, precoProduto)=> {
+        try {
+            const pool = await getConnection();
+            
+            const querySQL = `
+            UPDATE Produtos
+            SET nomeProduto = @nomeProduto,
+                precoProduto = @precoProduto
+                WHERE idProduto = @idProduto
+            `;
+
+            await pool.request()
+                .input('idProduto',sql.UniqueIdentifier, idProduto)
+                .input('nomeProduto', sql.VarChar(100), nomeProduto)
+                .input('precoProduto', sql.Decimal(10,2), precoProduto)
+                .query(querySQL);
+        } catch (error) {
+            console.error("Erro ao atualizar o produtos", error);
+            throw error;
+        }
+    },
+
+    deletarProduto: async (idProduto)=> {
+        try {
+            
+            const pool = await getConnection();
+
+            const querySQL =`
+                DELETE FROM Produtos
+                WHERE idProduto = @idProduto
+            `;
+
+            await pool.request()
+                .input('idProduto', sql.UniqueIdentifier, idProduto)
+                .query(querySQL);
+        } catch (error) {
+            console.error("Erro ao deletar o produtos", error);
+            throw error;
+        }
+    },
+
 };
 
 module.exports = {produtoModel};
