@@ -1,0 +1,150 @@
+type: collection.insomnia.rest/5.0
+name: Loja Espricio
+meta:
+  id: wrk_f05553307e49410095cb9c30161c6b4c
+  created: 1762467318637
+  modified: 1762467486474
+  description: ""
+collection:
+  - name: Produtos
+    meta:
+      id: fld_5765bab65f144c78be87cd50566142a7
+      created: 1762467359311
+      modified: 1763163978496
+      sortKey: -1762467359311
+      description: ""
+    children:
+      - url: http://localhost:8081/produtos
+        name: Listar Produtos
+        meta:
+          id: req_e8abff4afd5340c6ac1ff125981cc536
+          created: 1762467368892
+          modified: 1762994136806
+          isPrivate: false
+          description: ""
+          sortKey: -1762467368892
+        method: GET
+        parameters:
+          - id: pair_83da26b32fdc4a4caecccf1ff5c4f069
+            name: Celular
+            value: "1200"
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8081/produtos
+        name: Criar Produto
+        meta:
+          id: req_b7b66d0ab7b14b8ab0424d35fcacbdbb
+          created: 1762473408073
+          modified: 1763079997388
+          isPrivate: false
+          description: ""
+          sortKey: -1762473408073
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"id": 1,
+            	"nomeProduto": "Celular",
+            	"precoProduto": 1200.00
+            }
+        parameters:
+          - id: pair_40c6c1e1985c43f79d15381dd926e61a
+            name: Celular
+            value: "50.90"
+            description: ""
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8081/produtos/176839B5-F2E4-4A24-8C52-052C9AA75FDD
+        name: Atualizar Produto
+        meta:
+          id: req_9a9e3befab6c45f595115137773b762c
+          created: 1763073499048
+          modified: 1763157571045
+          isPrivate: false
+          description: ""
+          sortKey: -1762473408173
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"precoProduto": 90
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8081/produtos/176839B5-F2E4-4A24-8C52-052C9AA75FDD
+        name: Deletar Produto
+        meta:
+          id: req_8b04426fc74e414396fe41667f66b510
+          created: 1763160643019
+          modified: 1763160849301
+          isPrivate: false
+          description: ""
+          sortKey: -1762473408123
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.0.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: clientes
+    meta:
+      id: fld_ff5ab3b7d1d24cb0905263006da5a68f
+      created: 1763074936350
+      modified: 1763074936350
+      sortKey: -1763074936350
+      description: ""
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_3abe79b064fe01b15f912b353e57df7fbda3ca57
+    created: 1762467318672
+    modified: 1762467318672
+environments:
+  name: Base Environment
+  meta:
+    id: env_3abe79b064fe01b15f912b353e57df7fbda3ca57
+    created: 1762467318666
+    modified: 1762467318666
+    isPrivate: false

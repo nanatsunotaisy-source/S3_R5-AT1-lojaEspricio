@@ -1,95 +1,187 @@
-const { promises } = require("dns");
 const { sql, getConnection } = require("../config/db");
 
 const clienteModel = {
-    
     /**
-     * buscar todos os clientes no banco de dados.
-     *
+     * Busca todos os clientes no banco de dados
+     * 
      * @async
-     * @function buscarTodos
-     * @returns {promise<Array>} Retorna uma tabela com todos os clientes.
-     * @throws Mostra no console e propaga o erro caso a busca falha.
+     * @function buscarClientes
+     * @returns {Promise<Array>} Retorna uma lista com todos os clientes.
+     * @throws mostra no console e propaga o erro caso a busca falhe.
+     * 
      */
-    buscarTodos: async () => {
+    buscarClientes: async () => {
         try {
             const pool = await getConnection();
+            const querySQL = "SELECT * FROM Clientes"
 
-            const querySQL = 'SELECT * FROM Clientes';
-
-            const result = await pool.request()
-                .query(querySQL);
+            const result = await pool.request().query(querySQL);
 
             return result.recordset;
 
         } catch (error) {
-            console.error("Erro ao buscar Clientes", error);
-            throw error; // Reverberar o erro para a função que o chamar.
-        }
-    },
-
-    buscarUm: async (cpfCliente) => {
-        try {
-            const pool = await getConnection();
-
-            const querySQL = `
-                SELECT * FROM Clientes
-                WHERE cpfCliente = @cpfCliente
-            `;
-
-            const result = await pool.request()
-                .input('cpfCliente', sql.UniqueIdentifier, cpfCliente)
-                .query(querySQL);
-
-            return result.recordset;
-
-        } catch (error) {
-            console.error("Erro ao buscar o clientes", error);
+            console.error("Erro ao buscar clientes: ", error);
             throw error;
         }
     },
 
     /**
-     * Insere um novo cliente no banco de dados.
-     *
+     * 
+     * Retorna todos os dados de um cliente no banco de dados, usando um número de CPF que será fornecido
+     * 
      * @async
-     * @function criarCliente
-     * @param {object} novoCliente - Objeto contendo nomeCliente e cpfCliente.
-     * @returns {promise<object>} Retorna o objeto do cliente recém-criado.
-     * @throws Propaga o erro caso a inserção falhe (ex: CPF duplicado).
+     * @param {string} cpfCliente 
+     * @returns {Promise<Array>}
+     * @throws mostra no console e propaga o erro caso a busca falhe.
      */
-    criarCliente: async (novoCliente) => {
+
+    buscarCpf: async (cpfCliente) => {
         try {
-            
-            const { nomeCliente, cpfCliente } = novoCliente;
+            const pool = await getConnection();
+            const querySQL = `
+            SELECT * FROM Clientes
+            WHERE cpfCliente = @cpfCliente
+          `;
+
+            const result = await pool.request()
+            .input("cpfCliente", sql.Char, cpfCliente)
+            .query(querySQL);
+
+            return result.recordset;
+
+        } catch (error) {
+            console.error("Erro ao buscar CPF dos clientes: ", error);
+            throw error;
+        }
+    },
+
+       /**
+     * 
+     * Retorna todos os dados de um cliente no banco de dados, usando ID que será fornecido
+     * 
+     * @async
+     * @param {string} idCliente
+     * @returns {Promise<Array>}
+     * @throws mostra no console e propaga o erro caso a busca falhe.
+     */
+    buscarID: async (idCliente) => {
+        try {
+            const pool = await getConnection();
+            const querySQL = `
+            SELECT * FROM Clientes
+            WHERE idCliente = @idCliente
+          `;
+
+            const result = await pool.request()
+            .input("idCliente", sql.Char, idCliente)
+            .query(querySQL);
+
+            return result.recordset;
+
+        } catch (error) {
+            console.error("Erro ao buscar o cliente: ", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Insere um novo cliente no banco de dados
+     * 
+     * @async
+     * @function adicionarClientes
+     * @param {string} nomeCliente - Nome do cliente que será adicionado
+     * @param {string} cpfCliente - CPF do cliente
+     * @returns {Promise<void>} Não retorna nada, apenas executa a inserção
+     * @throws Mostra no console e propaga o erro caso a inserção falhe.
+     * 
+     */
+    adicionarClientes: async (nomeCliente, cpfCliente) => {
+        try {
 
             const pool = await getConnection();
 
             const querySQL = `
                 INSERT INTO Clientes (nomeCliente, cpfCliente)
-                OUTPUT INSERTED.* VALUES (@nomeCliente, @cpfCliente);
-            `;
+                VALUES (@nomeCliente, @cpfCliente)
+            `
 
-            const result = await pool.request()
-                // Define os parâmetros de entrada (inputs) para evitar SQL Injection
-                .input('nomeCliente', sql.VarChar, nomeCliente)
-                .input('cpfCliente', sql.VarChar(14), cpfCliente)
+            await pool.request()
+                .input("nomeCliente", sql.VarChar(100), nomeCliente)
+                .input("cpfCliente", sql.Char(11), cpfCliente)
                 .query(querySQL);
 
-            
-            return result.recordset[0];
 
         } catch (error) {
-            console.error("Erro ao criar cliente", error);
+            console.error("Erro ao adicionar clientes: ", error);
+            throw error;
+        }
+    },
 
-            
-            if (error.number === 2601 || error.number === 2627) {
-                throw new Error("Este CPF já está cadastrado.");
-            }
 
-            throw error; // Reverbera outros erros
+    /**
+     * Atualiza as informações de um cliente no banco de dados
+     * 
+     * @async
+     * @function atualizarCliente
+     * @param {string} idCliente - Id que será usado para buscar o cliente
+     * @param {string} nomeCliente - Nome do cliente que será adicionado
+     * @param {string} cpfCliente - CPF do cliente
+     * @returns {Promise<void>} Não retorna nada, apenas executa a inserção
+     * @throws Mostra no console e propaga o erro caso a inserção falhe.
+     * 
+     */
+     atualizarCliente: async (idCliente, nomeCliente, cpfCliente) => {
+        try {
+            const pool = await getConnection();
+
+            const querySQL = `
+                UPDATE Clientes
+                SET nomeCliente = @nomeCliente,
+                    cpfCliente = @cpfCliente
+                WHERE idCliente = @idCliente
+            `;
+
+            await pool.request()
+                .input("idCliente", sql.UniqueIdentifier, idCliente)
+                .input("nomeCliente", sql.VarChar(100), nomeCliente)
+                .input("cpfCliente", sql.Char(11), cpfCliente)
+                .query(querySQL);
+
+        } catch (error) {
+            console.error("Erro ao atualizar o cliente: ", error);
+            throw error;
+        }
+    },
+
+
+   /**
+     * 
+     * Deleta um cliente do banco de dados
+     * 
+     * @async
+     * @param {string} idCliente - Id do produto em UUID no banco de dados.
+     * @returns {Promise<Array>}
+     * @throws mostra no console e propaga o erro caso a busca falhe.
+     */
+     deletarCliente: async (idCliente) => {
+        try {
+            const pool = await getConnection();
+
+            const querySQL = `
+                DELETE FROM Clientes
+                WHERE idCliente = @idCliente
+            `;
+
+            await pool.request()
+            .input("idCliente", sql.UniqueIdentifier, idCliente)
+            .query(querySQL)
+
+        } catch (error) {
+            console.error("Erro ao deletar o cliente: ", error);
+            throw error;
         }
     }
-}; // Fechamento do objeto clienteModel
 
-module.exports = {clienteModel}
+}
+
+module.exports = { clienteModel };
